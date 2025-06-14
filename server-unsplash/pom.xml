@@ -62,6 +62,11 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>me.paulschwarz</groupId>
+			<artifactId>spring-dotenv</artifactId>
+			<version>4.0.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -88,6 +93,22 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<configuration>
+					<url>jdbc:postgresql://localhost:5432/unsplash-db</url>
+					<user>postgres</user>
+					<password>3103Kiru</password>
+					<cleanDisabled>false</cleanDisabled>
+					<schemas>
+						<schema>public</schema>
+					</schemas>
+					<locations>
+						<location>filesystem:src/main/resources/db/migration</location>
+					</locations>
 				</configuration>
 			</plugin>
 		</plugins>
