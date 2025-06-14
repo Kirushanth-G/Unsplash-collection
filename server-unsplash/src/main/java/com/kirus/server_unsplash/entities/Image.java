@@ -1,5 +1,6 @@
 package com.kirus.server_unsplash.entities;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -22,8 +23,12 @@ public class Image {
     private String id;
 
     private String url;
-    private String author_name;
-    private String author_username;
+    @Column(name = "author_name")
+    private String authorName;
+    @Column(name = "author_username")
+    private String authorUsername;
+    @Column(name = "published_at")
     private LocalDateTime publishedAt;
+    @Column(name = "download_url")
     private String downloadUrl;
 }
