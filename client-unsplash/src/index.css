@@ -1,4 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/* Removed unsupported @custom-variant rules */
+body {
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
