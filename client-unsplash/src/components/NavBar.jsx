@@ -14,17 +14,25 @@ const NavBar = () => {
         <div className='flex items-center space-x-4'>
           <Button
             variant='ghost'
-            className={`font-medium ${selected === 'Home' ? 'bg-[#E5E7EB]' : ''}`}
+            className={`font-medium ${
+              selected === 'Home'
+                ? 'bg-[#E5E7EB] text-[#121826]'
+                : 'text-[#6C727F]'
+            }`}
             onClick={() => setSelected('Home')}
           >
             Home
           </Button>
           <Button
             variant='ghost'
-            className={`font-medium ${selected === 'Collection' ? 'bg-[#E5E7EB]' : ''}`}
+            className={`font-medium ${
+              selected === 'Collection'
+                ? 'bg-[#E5E7EB] text-[#121826]'
+                : 'text-[#6C727F]'
+            }`}
             onClick={() => setSelected('Collection')}
           >
-            Collection
+            Collections
           </Button>
         </div>
       </div>
