@@ -10,8 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,7 +37,7 @@ public class UnsplashService {
         ResponseEntity<UnsplashSearchResponse> response = restTemplate.exchange(
                 url, HttpMethod.GET, null, UnsplashSearchResponse.class);
 
-        assert response.getBody() != null;
+        Objects.requireNonNull(response.getBody(), "Unsplash API response body is null");
         return response.getBody().getResults().stream()
                 .map(this::convertToImage)
                 .collect(Collectors.toList());
@@ -46,7 +50,7 @@ public class UnsplashService {
         ResponseEntity<UnsplashPhoto> response = restTemplate.exchange(
                 url, HttpMethod.GET, null, UnsplashPhoto.class);
 
-        assert response.getBody() != null;
+        Objects.requireNonNull(response.getBody(), "Unsplash API response body is null");
         return convertToImage(response.getBody());
     }
 
@@ -56,7 +60,19 @@ public class UnsplashService {
         image.setUrl(photo.getUrls().getRegular());
         image.setAuthorName(photo.getUser().getName());
         image.setAuthorUsername(photo.getUser().getUsername());
-        image.setPublishedAt(photo.getCreatedAt());
+        // Fix for null published_at error
+        if (photo.getCreatedAt() != null) {
+            try {
+                // Parse ISO8601 string to Date
+                LocalDateTime ldt = LocalDateTime.parse(photo.getCreatedAt(), DateTimeFormatter.ISO_DATE_TIME);
+                image.setPublishedAt(Timestamp.valueOf(ldt).toLocalDateTime());
+            } catch (Exception e) {
+                image.setPublishedAt(LocalDateTime.now());
+            }
+        } else {
+            // Use current time as fallback if Unsplash doesn't provide a date
+            image.setPublishedAt(LocalDateTime.now());
+        }
         image.setDownloadUrl(photo.getLinks().getDownload());
         return image;
     }
@@ -73,11 +89,10 @@ public class UnsplashService {
     @Setter
     @Getter
     public static class UnsplashPhoto {
-
         private String id;
         private UnsplashUrls urls;
         private UnsplashUser user;
-        private LocalDateTime createdAt;
+        private String createdAt; // Changed from LocalDateTime to String
         private UnsplashLinks links;
     }
 

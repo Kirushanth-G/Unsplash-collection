@@ -21,6 +21,9 @@ public class CollectionController {
     @Autowired
     private ImageRepository imageRepository;
 
+    @Autowired
+    private UnsplashService unsplashService;
+
     // Get all collections
     @GetMapping
     public ResponseEntity<List<Collection>> getAllCollections() {
@@ -80,5 +83,27 @@ public class CollectionController {
     @PostMapping
     public Collection createCollection(@RequestBody Collection collection) {
         return collectionRepository.save(collection);
+    }
+
+    @PostMapping("/{collectionId}/unsplash-images/{imageId}")
+    public ResponseEntity<Collection> addUnsplashImageToCollection(
+            @PathVariable Long collectionId,
+            @PathVariable String imageId) {
+
+        return collectionRepository.findById(collectionId)
+                .map(collection -> {
+                    // Check if image already exists in our database
+                    Image image = imageRepository.findById(imageId)
+                            .orElseGet(() -> {
+                                // If not, fetch from Unsplash and save
+                                Image newImage = unsplashService.getImageDetails(imageId);
+                                return imageRepository.save(newImage);
+                            });
+
+                    collection.getImages().add(image);
+                    collectionRepository.save(collection);
+                    return ResponseEntity.ok(collection);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 }
