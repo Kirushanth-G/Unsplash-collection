@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 
-const NavBar = () => {
+const NavBar = ({ onNavigate }) => {
   const [selected, setSelected] = useState('Home');
 
   return (
@@ -19,7 +19,10 @@ const NavBar = () => {
                 ? 'bg-[#E5E7EB] text-[#121826]'
                 : 'text-[#6C727F]'
             }`}
-            onClick={() => setSelected('Home')}
+            onClick={() => {
+              setSelected('Home');
+              onNavigate('home');
+            }}
           >
             Home
           </Button>
@@ -30,7 +33,10 @@ const NavBar = () => {
                 ? 'bg-[#E5E7EB] text-[#121826]'
                 : 'text-[#6C727F]'
             }`}
-            onClick={() => setSelected('Collection')}
+            onClick={() => {
+              setSelected('Collection');
+              onNavigate('collections');
+            }}
           >
             Collections
           </Button>

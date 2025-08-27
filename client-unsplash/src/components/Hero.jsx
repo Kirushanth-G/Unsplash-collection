@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
+import axios from '@/api/axiosConfig';
 
 const Hero = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const handleSearch = () => {
-    console.log('Searching for:', searchQuery);
-    // Add your search logic here
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+    try {
+      const res = await axios.get(`/api/unsplash/search`, {
+        params: { query: searchQuery },
+      });
+      console.log('Search results:', res.data);
+      // TODO: handle/display results as needed
+    } catch (err) {
+      console.error('Search error:', err);
+    }
   };
 
   const handleKeyPress = (e) => {
@@ -23,6 +31,8 @@ const Hero = () => {
         className='absolute inset-0 bg-cover bg-center bg-no-repeat'
         style={{
           backgroundImage: "url('/src/assets/hero-image.png')",
+          zIndex: 0,
+          marginTop: '50px',
         }}
       ></div>
 
@@ -37,25 +47,40 @@ const Hero = () => {
           <div className='mx-auto mb-12 max-w-2xl text-[0.875rem] leading-relaxed font-[300] text-[#121826]'>
             Search high-resolution images from Unsplash
           </div>
-          {/* Search Bar */}
-          <div className='mx-auto max-w-2xl'>
-            <div className='flex items-center overflow-hidden rounded-full bg-white shadow-2xl'>
-              <input
-                type='text'
-                placeholder='Enter your keywords...'
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className='flex-1 bg-transparent px-8 py-4 text-lg text-gray-800 placeholder-gray-500 outline-none'
-              />
 
-              <Button
-                onClick={handleSearch}
-                className='m-2 rounded-full bg-blue-600 px-8 py-4 text-lg font-semibold text-white transition-colors duration-200 hover:bg-blue-700'
+          <div className='mx-auto max-w-2xl' style={{ width: 380 }}>
+            <form
+              className='w-full'
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSearch();
+              }}
+            >
+              <div
+                className='flex w-full items-center rounded-md bg-white px-3 shadow-xl'
+                style={{
+                  border: '1px solid #E5E7EB',
+                }}
               >
-                <Search />
-              </Button>
-            </div>
+                <input
+                  type='text'
+                  placeholder='Enter your keywords...'
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  className='flex-1 bg-transparent py-4 text-[0.875rem] text-[121826] placeholder-[#cccccd] outline-none'
+                  style={{ border: 'none' }}
+                />
+                <button
+                  type='submit'
+                  className='ml-2 flex items-center justify-center rounded-full p-2 transition-colors hover:bg-[#cccccd]/30'
+                  tabIndex={0}
+                  aria-label='Search'
+                >
+                  <Search size={20} color='#cccccd' />
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
